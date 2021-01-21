@@ -1,0 +1,67 @@
+@font-face {
+  font-family: "nicoca";
+  src: url("~@/assets/font/nicoca_v1.ttf") format("truetype");
+}
+
+@keyframes test {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}
+
+@keyframes fly {
+  0% {
+    transform: translatey(-20px);
+  }
+  100% {
+    transform: translatey(0px);
+  }
+}
+
+@keyframes grow {
+  0% {
+    transform: rotate(135deg) translate(50%, 25%) skew(calc((90deg - 70deg) / 2), calc((90deg - 70deg) / 2)) scale(0.7);
+  }
+  100% {
+    transform: rotate(135deg) translate(50%, 25%) skew(calc((90deg - 70deg) / 2), calc((90deg - 70deg) / 2)) scale(0.9);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  overflow: scroll;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+#app {
+  font-family: nicoca, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  appearance: none;
+}
