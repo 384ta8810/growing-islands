@@ -10,7 +10,14 @@
       </div>
     </div>
     <div class="arrows">
-      <button class="arrow -left">
+      <button
+        @click.prevent="
+          playSound(
+            'http://soundbible.com/mp3/Elevator Ding-SoundBible.com-685385892.mp3'
+          )
+        "
+        class="arrow -left"
+      >
         <img src="../assets/images/island_arrow-left.svg" alt="" />
         <div class="shadow"></div>
       </button>
@@ -96,6 +103,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   transition: all 0.4s ease-in-out;
+  position: relative;
+  z-index: 3;
   // &:hover {
   //   button img:not(:hover) {
   //     opacity: 0.5;
@@ -185,6 +194,8 @@
       left: 50%;
       transform: translate(-30%, -50%);
       color: #fff;
+      text-shadow: -1px -1px #aaa, -2px -2px #999, -3px -3px #888,
+        -4px -4px rgb(95, 95, 95);
       span {
         display: block;
         margin: 0 auto 1.6rem;
@@ -211,6 +222,7 @@
   width: 100%;
   height: 100vh;
   position: absolute;
+  z-index: 2;
   .arrow {
     width: 9vw;
     position: absolute;
@@ -310,6 +322,12 @@ export default {
         zero += "0";
       }
       return (zero + num).slice(-len);
+    },
+    playSound(sound) {
+      if (sound) {
+        var audio = new Audio(sound);
+        audio.play();
+      }
     },
   },
 };
