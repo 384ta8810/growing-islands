@@ -40,15 +40,6 @@ html {
   font-size: 62.5%;
 }
 
-body {
-  overflow: scroll;
-  -ms-overflow-style: none;
-}
-
-body::-webkit-scrollbar {
-  display: none;
-}
-
 #app {
   font-family: nicoca, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

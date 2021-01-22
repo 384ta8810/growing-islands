@@ -50,13 +50,13 @@ html {
   font-size: 62.5%;
 }
 
-body {
-  overflow: scroll;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
+// body {
+//   overflow: scroll;
+//   -ms-overflow-style: none;
+//   &::-webkit-scrollbar {
+//     display: none;
+//   }
+// }
 
 #app {
   font-family: nicoca, Helvetica, Arial, sans-serif;

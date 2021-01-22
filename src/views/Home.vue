@@ -291,10 +291,10 @@ export default {
     // clock
     setInterval(this.updateTime, 1000);
     // prevent : scroll
-    function noScroll(event) {
-      event.preventDefault();
-    }
-    document.addEventListener("mousewheel", noScroll, { passive: false });
+    // function noScroll(event) {
+    //   event.preventDefault();
+    // }
+    // document.addEventListener("mousewheel", noScroll, { passive: false });
   },
   methods: {
     selectIsland(group) {
