@@ -7,10 +7,14 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     island: "",
+    loading: false,
   },
   mutations: {
     island(state, payload) {
       state.island = payload.group;
+    },
+    setLoading(state, payload) {
+      state.loading = payload;
     },
   },
   actions: {},

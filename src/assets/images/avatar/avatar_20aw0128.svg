@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 200 462.9" style="enable-background:new 0 0 200 462.9;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FF9D00;}
+	.st1{fill:none;stroke:#FFFF00;stroke-width:4;stroke-linejoin:round;}
+	.st2{fill:#FFFFFF;}
+	.st3{fill:#FFE6C8;}
+	.st4{fill:none;stroke:#444444;stroke-width:4;stroke-miterlimit:10;}
+	.st5{opacity:0.1;fill:#00FFFF;stroke:#444444;stroke-width:4;stroke-miterlimit:10;enable-background:new    ;}
+	.st6{fill:none;stroke:#FFFFFF;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;}
+	.st7{fill:#7A7570;}
+	.st8{fill:#190A06;}
+	.st9{fill:#BE3317;}
+	.st10{fill:#231815;}
+</style>
+<path class="st0" d="M59.2,112.5h81.6c4.4,0,8,3.8,8,8.5v333.3c0,4.7-3.6,8.5-8,8.5H59.2c-4.4,0-8-3.8-8-8.5V121
+	C51.2,116.3,54.8,112.5,59.2,112.5z"/>
+<polygon class="st1" points="51.2,196.4 99.9,260.9 148.8,196.4 "/>
+<rect x="81.2" y="260.9" class="st2" width="37.5" height="25.6"/>
+<ellipse class="st3" cx="100" cy="104.9" rx="100" ry="104.9"/>
+<g id="装飾">
+	<line class="st4" x1="87.2" y1="112.8" x2="111.2" y2="112.8"/>
+	<path class="st4" d="M35.8,101.6h42.5c5.1,0,9.3,4.4,9.3,9.9v16.5c0,5.4-4.1,9.9-9.3,9.9H35.8c-5.1,0-9.3-4.4-9.3-9.9v-16.5
+		C26.5,106,30.6,101.6,35.8,101.6z"/>
+	<path class="st4" d="M121.8,101.6h42.5c5.1,0,9.3,4.4,9.3,9.9v16.5c0,5.4-4.1,9.9-9.3,9.9h-42.5c-5.1,0-9.3-4.4-9.3-9.9v-16.5
+		C112.5,106,116.6,101.6,121.8,101.6z"/>
+	<path class="st5" d="M35.8,101.6h42.5c5.1,0,9.3,4.4,9.3,9.9v16.5c0,5.4-4.1,9.9-9.3,9.9H35.8c-5.1,0-9.3-4.4-9.3-9.9v-16.5
+		C26.5,106,30.6,101.6,35.8,101.6z"/>
+	<path class="st5" d="M121.8,101.6h42.5c5.1,0,9.3,4.4,9.3,9.9v16.5c0,5.4-4.1,9.9-9.3,9.9h-42.5c-5.1,0-9.3-4.4-9.3-9.9v-16.5
+		C112.5,106,116.6,101.6,121.8,101.6z"/>
+	<polyline class="st6" points="156.6,130.4 166,130.4 166,122.9 	"/>
+</g>
+<path class="st7" d="M196.6,78.2C185.4,33.2,146.4,0,99.9,0S14.4,33.2,3.2,78.2H196.6z"/>
+<ellipse class="st8" cx="67.5" cy="122.9" rx="4" ry="4.3"/>
+<ellipse class="st8" cx="133.5" cy="122.9" rx="4" ry="4.3"/>
+<rect x="83.5" y="168.7" class="st9" width="32" height="4.3"/>
+<ellipse class="st10" cx="147.5" cy="159.1" rx="1" ry="1.1"/>
+</svg>

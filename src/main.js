@@ -28,4 +28,20 @@ new Vue({
   apolloProvider,
   store,
   render: (h) => h(App),
+  created() {
+    // this.onLoadClick();
+  },
+  methods: {
+    // methods - loading
+    // loadMessage() {
+    //   return new Promise((resolve) => {
+    //     setTimeout(() => resolve("Hello world!"), 4000);
+    //   });
+    // },
+    // async onLoadClick() {
+    //   this.$store.commit("setLoading", true);
+    //   this.message = await this.loadMessage();
+    //   this.$store.commit("setLoading", false);
+    // },
+  },
 }).$mount("#app");
