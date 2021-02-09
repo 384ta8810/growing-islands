@@ -6,12 +6,21 @@
           query allStudents($group: String) {
             students(
               where: { job: { _eq: $group } }
-              order_by: { student_id: asc }
+              order_by: {evaluation_aggregate: {count: desc}}
             ) {
               student_id
               student_name
               booth_number
               work_title
+              evaluation(order_by: { created_at: desc }) {
+                author
+                plan
+                coding
+                design
+                presentation
+                created_at
+                comment
+              }
               evaluation_aggregate {
                 aggregate {
                   sum {
@@ -21,6 +30,13 @@
                     presentation
                   }
                 }
+              }
+            }
+            evaluate_aggregate(
+              where: { evaluation: { group: { _eq: $group } } }
+            ) {
+              aggregate {
+                count
               }
             }
           }
@@ -34,72 +50,144 @@
         <div v-if="loading" class="loading apollo">ローディング ...</div>
         <div v-else-if="error">404</div>
         <div v-if="data" class="block">
+          <Loading />
+          <ToJob />
           <div class="island">
-            <img
-              :src="require('../assets/images/island_' + group + '.svg')"
-              alt=""
-            />
-            <div v-for="student in data.students" :key="student.id">
+            <div class="island-image">
               <img
-                :src="
-                  require('../assets/images/avatar/avatar_' +
-                    student.student_id +
-                    '.svg')
-                "
+                :src="require('../assets/images/island_' + group + '.svg')"
                 alt=""
               />
             </div>
-          </div>
-          <ul class="data">
-            <li
-              v-for="student in data.students"
-              :key="student.id"
-              class="data-item"
-            >
-              <p class="data-title">
-                {{ student.booth_number }}
-                {{ student.work_title }}
-              </p>
-              <p class="data-name">
-                {{ student.student_name }}
-              </p>
-              <div
-                v-if="
-                  student.evaluation_aggregate.aggregate.sum.design === null
+
+            <div class="pad">
+              <button
+                class="pad-key -upperLeft"
+                v-if="!(filteredItem[0].relatedIslands[0].name === '')"
+                @click="
+                  selectIsland(`${filteredItem[0].relatedIslands[0].name}`)
                 "
               >
-                <apexchart
-                  type="donut"
-                  width="100%"
-                  :options="chartOptions"
-                  :series="[1, 1, 1, 1]"
-                ></apexchart>
-              </div>
-              <div v-else>
-                <apexchart
-                  type="donut"
-                  width="100%"
-                  :options="chartOptions"
-                  :series="[
-                    student.evaluation_aggregate.aggregate.sum.design,
-                    student.evaluation_aggregate.aggregate.sum.coding,
-                    student.evaluation_aggregate.aggregate.sum.presentation,
-                    student.evaluation_aggregate.aggregate.sum.plan,
-                  ]"
-                ></apexchart>
-              </div>
-              <div class="data-image">
+                <img src="../assets/images/arrow_upperLeft.svg" alt="" />
+              </button>
+              <button
+                class="pad-key -upperRight"
+                v-if="!(filteredItem[0].relatedIslands[1].name === '')"
+                @click="
+                  selectIsland(`${filteredItem[0].relatedIslands[1].name}`)
+                "
+              >
+                <img src="../assets/images/arrow_upperRight.svg" alt="" />
+              </button>
+              <button
+                class="pad-key -lowerRight"
+                v-if="!(filteredItem[0].relatedIslands[2].name === '')"
+                @click="
+                  selectIsland(`${filteredItem[0].relatedIslands[2].name}`)
+                "
+              >
+                <img src="../assets/images/arrow_lowerRight.svg" alt="" />
+              </button>
+              <button
+                class="pad-key -lowerLeft"
+                v-if="!(filteredItem[0].relatedIslands[3].name === '')"
+                @click="
+                  selectIsland(`${filteredItem[0].relatedIslands[3].name}`)
+                "
+              >
+                <img src="../assets/images/arrow_lowerLeft.svg" alt="" />
+              </button>
+            </div>
+
+            <div class="avatars">
+              <div
+                v-for="(item, idx) in filteredItem[0].members"
+                :key="idx"
+                class="avatar"
+                :style="`left: ${item.xy[0]}%; bottom: ${item.xy[1]}%`"
+                v-on:mouseover="mouseOverAction(idx)"
+                v-on:mouseleave="mouseLeaveAction(idx)"
+              >
                 <img
                   :src="
                     require('../assets/images/avatar/avatar_' +
-                      student.student_id +
+                      item.id +
                       '.svg')
                   "
                   alt=""
                 />
+                <div
+                  v-show="hoverFlag && idx === hoverIndex"
+                  class="avatar-message"
+                >
+                  <p>{{ item.message }}</p>
+                  <p>{{ item.name }}</p>
+                </div>
               </div>
-            </li>
-          </ul>
+            </div>
+          </div>
+
+          <div class="data">
+            <p class="data-title">{{ filteredItem[0].title }}</p>
+            <!-- <p class="data-count">
+              プレゼン回数：{{ data.evaluate_aggregate.aggregate.count }}回
+            </p> -->
+            <ul class="data-list">
+              <li
+                v-for="student in data.students"
+                :key="student.id"
+                class="data-item"
+              >
+                <div class="column">
+                  <div class="data-icon">
+                    <img
+                      :src="
+                        require('../assets/images/icon/icon_' +
+                          student.student_id +
+                          '.png')
+                      "
+                      alt=""
+                    />
+                  </div>
+                  <p class="data-work">
+                    <span>{{ student.booth_number }}.</span>
+                    <span>{{ student.work_title }}</span>
+                  </p>
+                </div>
+                <p class="data-name">
+                  {{ student.student_name }}
+                </p>
+                <div
+                  v-if="
+                    student.evaluation_aggregate.aggregate.sum.design === null
+                  "
+                >
+                  <apexchart
+                    type="donut"
+                    :options="chartOptions"
+                    :series="[1, 1, 1, 1]"
+                  ></apexchart>
+                </div>
+                <div v-else>
+                  <apexchart
+                    type="donut"
+                    :options="chartOptions"
+                    :series="[
+                      student.evaluation_aggregate.aggregate.sum.design,
+                      student.evaluation_aggregate.aggregate.sum.coding,
+                      student.evaluation_aggregate.aggregate.sum.presentation,
+                      student.evaluation_aggregate.aggregate.sum.plan,
+                    ]"
+                  ></apexchart>
+                </div>
+                <p class="data-count">
+                  <span>今までのプレゼン回数：</span>
+                  <span>{{ student.evaluation.length }}</span>
+                  <span>回</span>
+                </p>
+              </li>
+            </ul>
+          </div>
         </div>
       </template>
     </ApolloQuery>
@@ -107,8 +195,23 @@
 </template>
 
 <script>
+import islandData from "../assets/json/islands.json";
+import ToJob from "../components/ToJob.vue";
+import Loading from "../components/LoadingJob.vue";
+
 export default {
   name: "AllStudents",
+  components: {
+    ToJob,
+    Loading,
+  },
+  computed: {
+    filteredItem() {
+      return this.islandData.islands.job.filter((island) => {
+        return island.name.includes(this.group);
+      });
+    },
+  },
   mounted() {
     this.forceRerender();
   },
@@ -126,9 +229,29 @@ export default {
   },
   data() {
     return {
+      islandData,
       componentKey: 0,
       group: this.$store.getters.getIsland,
-      series: [],
+      hoverFlag: false,
+      hoverIndex: null,
+      series: [
+        {
+          name: "デザイン",
+          data: "",
+        },
+        {
+          name: "コーディング",
+          data: "",
+        },
+        {
+          name: "プレゼン",
+          data: "",
+        },
+        {
+          name: "企画",
+          data: "",
+        },
+      ],
       chartOptions: {
         chart: {
           type: "donut",
@@ -136,13 +259,25 @@ export default {
         legend: {
           show: false,
         },
-        colors: ["#F56582", "#445771", "#00B5B2", "#FFCC56"],
+        colors: ["#F56582", "#445771", "#FFCC56", "#00B5B2"],
         dataLabels: {
           enabled: true,
+          formatter: function(val, opts) {
+            const name = opts.w.globals.labels[opts.seriesIndex];
+            return [name, opts.w.config.series[opts.seriesIndex]];
+          },
           textAnchor: "left",
           style: {
             fontSize: "14px",
+            fontFamily: "nicoca",
+            fontWeight: "bold",
           },
+          dropShadow: {
+            enabled: false,
+          },
+        },
+        stroke: {
+          show: false,
         },
         responsive: [
           {
@@ -161,17 +296,27 @@ export default {
         plotOptions: {
           pie: {
             donut: {
+              size: "40%",
               labels: {
                 show: true,
+                name: {
+                  show: true,
+                  color: "#373d3f",
+                },
                 value: {
                   show: true,
+                  fontFamily: "nicoca",
+                  color: "#373d3f",
+                  fontWeight: "bold",
+                  fontSize: "26px",
                 },
                 total: {
                   show: true,
                   label: "総合",
-                  style: {
-                    fontSize: "2px",
-                  },
+                  fontFamily: "nicoca",
+                  color: "#373d3f",
+                  fontWeight: "bold",
+                  fontSize: "15px",
                 },
               },
             },
@@ -186,7 +331,15 @@ export default {
     },
     selectIsland(group) {
       this.$store.commit("island", { group });
-      this.$router.go({ path: this.$router.currentRoute.path, force: true });
+      this.$router.go({ path: this.$router.currentRoute.path });
+      // this.$router.push({ path: "/homeData" });
+    },
+    mouseOverAction(index) {
+      this.hoverFlag = true;
+      this.hoverIndex = index;
+    },
+    mouseLeaveAction() {
+      this.hoverFlag = false;
     },
   },
 };
@@ -195,75 +348,113 @@ export default {
 <style lang="scss" scoped>
 @import "../assets/css/setting.scss";
 
-::-webkit-scrollbar {
-  width: 1rem;
-  height: 2rem;
-}
-::-webkit-scrollbar-track {
-  background: #cbcbcb;
-  border-radius: 1.3rem;
-  // box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-}
-::-webkit-scrollbar-thumb {
-  background: #29abe2;
-  border-radius: 1.3rem;
-  // box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
-}
-
-.block {
-  width: 100%;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: 1.4fr 1.2fr;
-}
-
 .island {
   position: relative;
   height: 100vh;
-  img {
-    width: 60%;
+  .island-image,
+  .avatars {
+    width: 68%;
     position: absolute;
-    top: 50%;
+    bottom: 4%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
   }
-}
-
-.data {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3.2rem 4.2rem;
-  padding: 5rem;
-  background: #fff;
-  border-radius: 5rem 0 0 5rem;
-  box-shadow: -0.4rem 0 0.6rem rgba($color: #000000, $alpha: 0.16);
-  border-right: 20px solid #fff;
-  .data-item {
-    width: 100%;
-    background: #e7e8ea;
-    border-radius: 1.2rem;
-    box-shadow: 0 -0.4rem 0.6rem rgba($color: #000000, $alpha: 0.16);
-    padding: 2.4rem 2.6rem;
-    .data-title,
-    .data-name {
-      font-family: kosugi-maru, Helvetica, Arial, sans-serif;
+  .island-image {
+    img {
+      width: 100%;
     }
-    .data-title {
-      font-size: 1.8rem;
-      text-align: center;
-      height: 2em;
-    }
-    .data-name {
-      font-size: 2.4rem;
-      text-align: center;
-      margin: 1.2rem 0;
-    }
-    .data-image {
-      width: 18%;
+  }
+  .avatars {
+    height: 100vh;
+    .avatar {
+      position: absolute;
+      height: 9.2rem;
+      cursor: pointer;
+      &:hover {
+        img {
+          animation: bounce 0.8s linear infinite alternate;
+        }
+      }
+      &.top1 {
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translate(-50%, -30%);
+          background: url(../assets/images/crown.png) no-repeat center;
+          background-size: contain;
+          width: 8rem;
+          height: 3rem;
+        }
+      }
       img {
-        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .avatar-message {
+        position: absolute;
+        top: 0%;
+        left: 50%;
+        z-index: 2;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 2rem;
+        transform: translate(-50%, -120%);
+        width: 16vw;
+        height: auto;
+        &::before {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -15px;
+          border: 15px solid transparent;
+          border-top: 15px solid #fff;
+        }
+        p {
+          &:nth-of-type(1) {
+            font-size: 2rem;
+          }
+          &:nth-of-type(2) {
+            font-family: kosugi-maru, Helvetica, Arial, sans-serif;
+            font-size: 1.4rem;
+            text-align: right;
+            margin: 0.6rem 0 0 0;
+          }
+        }
+      }
+    }
+  }
+  .pad {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    .pad-key {
+      width: 9rem;
+      position: absolute;
+      transition: all 0.4s;
+      &:hover {
+        transition: all 0.4s;
+        transform: scale(1.3);
+      }
+      &.-upperLeft {
+        bottom: 38%;
+        left: 10%;
+      }
+      &.-upperRight {
+        bottom: 38%;
+        right: 10%;
+      }
+      &.-lowerRight {
+        bottom: 4%;
+        right: 10%;
+      }
+      &.-lowerLeft {
+        bottom: 4%;
+        left: 10%;
       }
     }
   }

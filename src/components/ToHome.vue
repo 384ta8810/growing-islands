@@ -1,5 +1,5 @@
 <template>
-  <div class="toTop" @click="toTop()">
+  <div class="toHome" @click="toHome()">
     <div class="islands">
       <div v-for="(item, index) in islandData.islands.home" :key="index">
         <img
@@ -15,14 +15,14 @@
 import islandData from "../assets/json/islands.json";
 
 export default {
-  name: "toTop",
+  name: "toHome",
   data() {
     return {
       islandData,
     };
   },
   methods: {
-    toTop() {
+    toHome() {
       this.$router.push({ path: "/" });
     },
   },
@@ -30,13 +30,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.toTop {
+.toHome {
   position: absolute;
   top: 2rem;
   left: 2rem;
   width: 14vw;
   background: url(../assets/images/toTop.svg) no-repeat center;
-  z-index: 2;
   cursor: pointer;
   .islands {
     width: 70%;

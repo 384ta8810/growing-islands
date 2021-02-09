@@ -26,6 +26,18 @@
   }
 }
 
+@keyframes bounce {
+  0% {
+    transform: translatey(0px);
+  }
+  50% {
+    transform: translatey(-16px);
+  }
+  100% {
+    transform: translatey(0px);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -77,15 +89,15 @@ button {
 }
 
 .bg.-noon {
-  background: linear-gradient(180deg, rgba(0, 177, 255, 0.32), rgba(60, 202, 214, 0.32));
+  background: linear-gradient(180deg, #b2e8fc, #bbebf6);
 }
 
 .bg.-evening {
-  background: linear-gradient(180deg, rgba(255, 136, 0, 0.45), rgba(255, 69, 0, 0.45));
+  background: linear-gradient(180deg, #ffc38b, #ffb48b);
 }
 
 .bg.-night {
-  background: linear-gradient(180deg, rgba(9, 55, 180, 0.45), rgba(5, 0, 57, 0.45));
+  background: linear-gradient(180deg, #8fa1d5, #8d90af);
 }
 
 .arrows {
@@ -99,14 +111,19 @@ button {
   width: 9vw;
   position: absolute;
   top: 40%;
-  transform: translateY(-50%);
-  animation: float 1.5s linear infinite alternate;
+  transition: all 0.4s ease-in-out;
+}
+
+.arrows .arrow:hover {
+  transform: scale(1.2);
+  transition: all 0.4s;
 }
 
 .arrows .arrow img {
   position: relative;
   z-index: 2;
   width: 100%;
+  animation: float 1.5s linear infinite alternate;
 }
 
 .arrows .arrow.-left {
@@ -122,4 +139,85 @@ button {
   height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+.data {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 3rem;
+  background: #fff;
+  border-radius: 5rem 0 0 5rem;
+  box-shadow: -0.4rem 0 0.6rem rgba(0, 0, 0, 0.16);
+  border-right: 20px solid #fff;
+}
+
+.data .data-title {
+  font-size: 4rem;
+  text-align: center;
+  margin: 0 0 3rem 0;
+}
+
+.data .data-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.2rem 4.2rem;
+}
+
+.data .data-list .data-item {
+  width: 100%;
+  background: #e7e8ea;
+  border-radius: 1.2rem;
+  box-shadow: 0 -0.4rem 0.6rem rgba(0, 0, 0, 0.16);
+  padding: 1.2rem 0;
+}
+
+.data .data-list .data-item .data-icon {
+  position: relative;
+  z-index: 2;
+  width: 30%;
+  padding: 0 1.2rem 0 0;
+}
+
+.data .data-list .data-item .data-icon img {
+  width: 5rem;
+  height: auto;
+}
+
+.data .data-list .data-item .data-work,
+.data .data-list .data-item .data-name,
+.data .data-list .data-item .data-count {
+  font-family: kosugi-maru, Helvetica, Arial, sans-serif;
+}
+
+.data .data-list .data-item .data-work {
+  font-size: 1.4rem;
+  text-align: left;
+}
+
+.data .data-list .data-item .data-work span:nth-of-type(1) {
+  font-size: 1.8rem;
+  letter-spacing: 0.1rem;
+}
+
+.data .data-list .data-item .data-name {
+  font-size: 2.2rem;
+  text-align: center;
+  height: 2em;
+}
+
+.data .data-list .data-item .data-count {
+  padding: 0 1.2rem;
+  text-align: right;
+  font-size: 1.4rem;
+}
+
+.data .data-list .data-item .data-count span:nth-of-type(2) {
+  font-size: 2.2rem;
+  letter-spacing: 0.1rem;
+}
+
+.column {
+  display: flex;
+  align-items: center;
+  padding: 0 1.2rem;
 }

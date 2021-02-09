@@ -6,12 +6,21 @@
           query allStudents($group: String) {
             students(
               where: { group: { _eq: $group } }
-              order_by: { student_id: asc }
+              order_by: {evaluation_aggregate: {count: desc}}
             ) {
               student_id
               student_name
               booth_number
               work_title
+              evaluation(order_by: { created_at: desc }) {
+                author
+                plan
+                coding
+                design
+                presentation
+                created_at
+                comment
+              }
               evaluation_aggregate {
                 aggregate {
                   sum {
@@ -21,6 +30,13 @@
                     presentation
                   }
                 }
+              }
+            }
+            evaluate_aggregate(
+              where: { evaluation: { group: { _eq: $group } } }
+            ) {
+              aggregate {
+                count
               }
             }
           }
@@ -35,7 +51,7 @@
         <div v-else-if="error">404</div>
         <div v-if="data" class="block">
           <Loading />
-          <ToTop />
+          <ToHome />
           <div class="island">
             <div class="island-image">
               <img
@@ -43,6 +59,7 @@
                 alt=""
               />
             </div>
+
             <div class="pad">
               <button
                 class="pad-key -upperLeft"
@@ -50,6 +67,7 @@
                 @click="
                   selectIsland(`${filteredItem[0].relatedIslands[0].name}`)
                 "
+                v-on:mouseover="playSound(mouseOver)"
               >
                 <img src="../assets/images/arrow_upperLeft.svg" alt="" />
               </button>
@@ -59,6 +77,7 @@
                 @click="
                   selectIsland(`${filteredItem[0].relatedIslands[1].name}`)
                 "
+                v-on:mouseover="playSound(mouseOver)"
               >
                 <img src="../assets/images/arrow_upperRight.svg" alt="" />
               </button>
@@ -68,6 +87,7 @@
                 @click="
                   selectIsland(`${filteredItem[0].relatedIslands[2].name}`)
                 "
+                v-on:mouseover="playSound(mouseOver)"
               >
                 <img src="../assets/images/arrow_lowerRight.svg" alt="" />
               </button>
@@ -77,16 +97,19 @@
                 @click="
                   selectIsland(`${filteredItem[0].relatedIslands[3].name}`)
                 "
+                v-on:mouseover="playSound(mouseOver)"
               >
                 <img src="../assets/images/arrow_lowerLeft.svg" alt="" />
               </button>
             </div>
+
             <div class="avatars">
               <div
                 v-for="(item, idx) in filteredItem[0].members"
                 :key="idx"
                 class="avatar"
-                :style="`left: ${item.xy[0]}%; top: ${item.xy[1]}%`"
+                :class="`avatar-${item.id}`"
+                :style="`left: ${item.xy[0]}%; bottom: ${item.xy[1]}%`"
                 v-on:mouseover="mouseOverAction(idx)"
                 v-on:mouseleave="mouseLeaveAction(idx)"
               >
@@ -108,18 +131,34 @@
               </div>
             </div>
           </div>
+
           <div class="data">
             <p class="data-title">{{ filteredItem[0].title }}</p>
+            <!-- <p class="data-count">
+              プレゼン回数：{{ data.evaluate_aggregate.aggregate.count }}回
+            </p> -->
             <ul class="data-list">
               <li
                 v-for="student in data.students"
                 :key="student.id"
                 class="data-item"
               >
-                <p class="data-work">
-                  {{ student.booth_number }}.
-                  {{ student.work_title }}
-                </p>
+                <div class="column">
+                  <div class="data-icon">
+                    <img
+                      :src="
+                        require('../assets/images/icon/icon_' +
+                          student.student_id +
+                          '.png')
+                      "
+                      alt=""
+                    />
+                  </div>
+                  <p class="data-work">
+                    <span>{{ student.booth_number }}.</span>
+                    <span>{{ student.work_title }}</span>
+                  </p>
+                </div>
                 <p class="data-name">
                   {{ student.student_name }}
                 </p>
@@ -146,16 +185,11 @@
                     ]"
                   ></apexchart>
                 </div>
-                <div class="data-image">
-                  <img
-                    :src="
-                      require('../assets/images/avatar/avatar_' +
-                        student.student_id +
-                        '.svg')
-                    "
-                    alt=""
-                  />
-                </div>
+                <p class="data-count">
+                  <span>今までのプレゼン回数：</span>
+                  <span>{{ student.evaluation.length }}</span>
+                  <span>回</span>
+                </p>
               </li>
             </ul>
           </div>
@@ -167,13 +201,14 @@
 
 <script>
 import islandData from "../assets/json/islands.json";
-import ToTop from "../components/ToTop.vue";
-import Loading from "../components/Loading.vue";
+import ToHome from "../components/ToHome.vue";
+import Loading from "../components/LoadingHome.vue";
+import mouseOver from "@/assets/sounds/mouseOver_02.mp3";
 
 export default {
   name: "AllStudents",
   components: {
-    ToTop,
+    ToHome,
     Loading,
   },
   computed: {
@@ -185,6 +220,15 @@ export default {
   },
   mounted() {
     this.forceRerender();
+
+    //
+    for (let i = 0; i < this.filteredItem[0].members.length; i++) {
+      setTimeout(() => {
+        if (document.querySelectorAll(".avatar")[i].classList[1] === `avatar-${this.topId}`) {
+          document.querySelectorAll(".avatar")[i].classList.add("top1")
+        }
+      }, 1000);
+    }
   },
   updated() {
     // time - set : bg
@@ -201,8 +245,10 @@ export default {
   data() {
     return {
       islandData,
+      mouseOver,
       componentKey: 0,
       group: this.$store.getters.getIsland,
+      topId: this.$store.getters.getTopCount,
       hoverFlag: false,
       hoverIndex: null,
       series: [
@@ -279,6 +325,7 @@ export default {
                   fontFamily: "nicoca",
                   color: "#373d3f",
                   fontWeight: "bold",
+                  fontSize: "26px",
                 },
                 total: {
                   show: true,
@@ -311,6 +358,20 @@ export default {
     mouseLeaveAction() {
       this.hoverFlag = false;
     },
+    playSound(sound) {
+      if (sound) {
+        const audio = new Audio(sound);
+        const audioPromise = audio.play();
+        if (audioPromise !== undefined) {
+          audioPromise
+            .then(() => {
+              audio.play();
+              audio.volume = 0.7;
+            })
+            .catch(() => {});
+        }
+      }
+    },
   },
 };
 </script>
@@ -338,18 +399,40 @@ export default {
     height: 100vh;
     .avatar {
       position: absolute;
+      z-index: 30;
       height: 9.2rem;
       cursor: pointer;
+      &:hover {
+        img {
+          animation: bounce 0.8s linear infinite alternate;
+        }
+      }
+      &.top1 {
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translate(-50%, -30%);
+          background: url(../assets/images/crown.png) no-repeat center;
+          background-size: contain;
+          width: 8rem;
+          height: 3rem;
+        }
+      }
       img {
         height: 100%;
+        display: block;
       }
       .avatar-message {
-        position: relative;
-        z-index: 2;
+        position: absolute;
+        top: 0%;
+        left: 50%;
+        z-index: 30;
         padding: 2rem;
         background: #fff;
         border-radius: 2rem;
-        transform: translate(-40%, -180%);
+        transform: translate(-50%, -120%);
         width: 16vw;
         height: auto;
         &::before {
@@ -366,8 +449,10 @@ export default {
             font-size: 2rem;
           }
           &:nth-of-type(2) {
-            font-size: 1.6rem;
+            font-family: kosugi-maru, Helvetica, Arial, sans-serif;
+            font-size: 1.4rem;
             text-align: right;
+            margin: 0.6rem 0 0 0;
           }
         }
       }
@@ -402,57 +487,6 @@ export default {
       &.-lowerLeft {
         bottom: 4%;
         left: 10%;
-      }
-    }
-  }
-}
-
-.data {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  padding: 5rem;
-  background: #fff;
-  border-radius: 5rem 0 0 5rem;
-  box-shadow: -0.4rem 0 0.6rem rgba($color: #000000, $alpha: 0.16);
-  border-right: 20px solid #fff;
-  .data-title {
-    font-size: 6rem;
-    text-align: center;
-    margin: 0 0 5rem 0;
-  }
-  .data-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3.2rem 4.2rem;
-    .data-item {
-      width: 100%;
-      background: #e7e8ea;
-      border-radius: 1.2rem;
-      box-shadow: 0 -0.4rem 0.6rem rgba($color: #000000, $alpha: 0.16);
-      padding: 2.4rem 0;
-      .data-work,
-      .data-name {
-        font-family: kosugi-maru, Helvetica, Arial, sans-serif;
-        height: 3em;
-        padding: 0 2.6rem;
-      }
-      .data-work {
-        font-size: 1.8rem;
-        text-align: center;
-      }
-      .data-name {
-        font-size: 2.4rem;
-        text-align: center;
-        margin: 1.2rem 0 0 0;
-      }
-      .data-image {
-        position: relative;
-        z-index: 2;
-        width: 18%;
-        margin: -2rem 2rem 0 auto;
-        img {
-          width: 100%;
-        }
       }
     }
   }

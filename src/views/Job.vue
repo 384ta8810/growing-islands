@@ -1,27 +1,32 @@
 <template>
   <div id="bg" class="bg">
     <Clock />
-    <Cloud />
-    <Star />
+    <Bg01 />
+    <News />
 
     <div class="arrows">
-      <router-link to="/" class="arrow -left">
+      <!-- <router-link to="/" class="arrow -left">
         <img src="../assets/images/island_arrow-left.svg" alt="" />
         <div class="shadow"></div>
-      </router-link>
-      <button class="arrow -right">
-        <img src="../assets/images/island_arrow-right.svg" alt="" />
+      </router-link> -->
+      <router-link to="/" class="arrow -right">
+        <img
+          v-on:mouseover="playSound(mouseOver)"
+          src="../assets/images/island_arrow-right.svg"
+          alt=""
+        />
         <div class="shadow"></div>
-      </button>
+      </router-link>
     </div>
 
     <div class="islands">
       <button
         v-for="(item, index) in islandData.islands.job"
         :key="index"
-        @click="selectIsland(`${item.name}`)"
+        @click="selectIsland(item.name)"
       >
         <img
+          v-on:mouseover="playSound(mouseOver)"
           :src="require('../assets/images/island_' + item.name + '.svg')"
           alt=""
         />
@@ -34,19 +39,21 @@
 <script>
 import islandData from "../assets/json/islands.json";
 import Clock from "../components/Clock.vue";
-import Cloud from "../components/Cloud.vue";
-import Star from "../components/Star.vue";
+import Bg01 from "../components/Bg01.vue";
+import News from "../components/News.vue";
+import mouseOver from "@/assets/sounds/mouseOver_01.mp3";
 
 export default {
   name: "Job",
   components: {
     Clock,
-    Cloud,
-    Star,
+    Bg01,
+    News,
   },
   data() {
     return {
       islandData,
+      mouseOver,
     };
   },
   mounted() {
@@ -64,15 +71,33 @@ export default {
   methods: {
     selectIsland(group) {
       this.$store.commit("island", { group });
-      console.log(group);
       this.$router.push({ path: "/jobData" });
+      this.onLoadClick();
     },
     // method - sound
     playSound(sound) {
       if (sound) {
         const audio = new Audio(sound);
-        audio.play();
+        const audioPromise = audio.play();
+        if (audioPromise !== undefined) {
+          audioPromise
+            .then(() => {
+              audio.play();
+              audio.volume = 0.7;
+            })
+            .catch(() => {});
+        }
       }
+    },
+    loadMessage() {
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(""), 6000);
+      });
+    },
+    async onLoadClick() {
+      this.$store.commit("setLoading", true);
+      this.message = await this.loadMessage();
+      this.$store.commit("setLoading", false);
     },
   },
 };
@@ -85,7 +110,7 @@ export default {
   width: 66vw;
   height: 100vh;
   margin: 0 auto;
-  padding: 50px 0;
+  padding: 14rem 0 5rem;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   transition: all 0.4s ease-in-out;
@@ -97,6 +122,7 @@ export default {
     align-items: flex-end;
     position: relative;
     transition: all 0.4s;
+    transform: scale(1.1);
     &:hover {
       transform: scale(1.3);
       transition: all 0.4s;
@@ -110,18 +136,40 @@ export default {
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: 76%;
+      right: -56%;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      animation: float 1.5s linear infinite alternate;
+    }
     &:nth-of-type(1) {
       grid-area: 1/2;
       top: 40%;
+      &::before {
+        background: url(../assets/images/flag_engineer.svg) no-repeat center;
+      }
     }
     &:nth-of-type(2) {
       grid-area: 2/1;
+      &::before {
+        background: url(../assets/images/flag_designer.svg) no-repeat center;
+      }
     }
     &:nth-of-type(3) {
       grid-area: 2/3;
+      &::before {
+        background: url(../assets/images/flag_business.svg) no-repeat center;
+      }
     }
     &:nth-of-type(4) {
       grid-area: 3/2;
+      &::before {
+        background: url(../assets/images/flag_director.svg) no-repeat center;
+      }
     }
   }
 }

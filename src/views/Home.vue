@@ -1,50 +1,80 @@
 <template>
   <div id="bg" class="bg">
-    <Clock />
-    <Cloud />
-    <Star />
+    <ApolloQuery
+      :query="
+        (gql) => gql`
+          query MyQuery {
+            students(
+              order_by: { evaluation_aggregate: { count: desc } }
+              limit: 10
+            ) {
+              student_name
+              booth_number
+              student_id
+              group
+              job
+            }
+          }
+        `
+      "
+      :pollInterval="2000"
+    >
+      <template v-slot="{ result: { loading, error, data } }">
+        <div v-if="loading" class="loading apollo">ローディング ...</div>
+        <div v-else-if="error">404</div>
+        <div v-if="data">
+          <Clock />
+          <Bg01 />
+          <News />
 
-    <div class="arrows">
-      <router-link to="/job" class="arrow -left">
-        <img src="../assets/images/island_arrow-left.svg" alt="" />
-        <div class="shadow"></div>
-      </router-link>
-      <button class="arrow -right">
-        <img src="../assets/images/island_arrow-right.svg" alt="" />
-        <div class="shadow"></div>
-      </button>
-    </div>
+          <div class="arrows">
+            <router-link to="/job" class="arrow -left">
+              <img
+                v-on:mouseover="playSound(mouseOver)"
+                src="../assets/images/island_arrow-left.svg"
+                alt=""
+              />
+              <div class="shadow"></div>
+            </router-link>
+            <!-- <router-link to="/job" class="arrow -right">
+              <img src="../assets/images/island_arrow-right.svg" alt="" />
+              <div class="shadow"></div>
+            </router-link> -->
+          </div>
 
-    <div class="islands">
-      <button
-        v-for="(item, index) in islandData.islands.home"
-        :key="index"
-        @click="selectIsland(`${item.name}`)"
-      >
-        <img
-          v-on:mouseover="playSound(mouseOver)"
-          :src="require('../assets/images/island_' + item.name + '.svg')"
-          alt=""
-        />
-        <div class="shadow"></div>
-      </button>
-    </div>
+          <div class="islands">
+            <button
+              v-for="(item, index) in islandData.islands.home"
+              :key="index"
+              @click="selectIsland(item.name, data.students[0].student_id)"
+            >
+              <img
+                v-on:mouseover="playSound(mouseOver)"
+                :src="require('../assets/images/island_' + item.name + '.svg')"
+                alt=""
+              />
+              <div class="shadow"></div>
+            </button>
+          </div>
+        </div>
+      </template>
+    </ApolloQuery>
   </div>
 </template>
 
 <script>
 import islandData from "../assets/json/islands.json";
 import Clock from "../components/Clock.vue";
-import Cloud from "../components/Cloud.vue";
-import Star from "../components/Star.vue";
+import Bg01 from "../components/Bg01.vue";
+import News from "../components/News.vue";
 import mouseOver from "@/assets/sounds/mouseOver_01.mp3";
 
 export default {
   name: "Home",
   components: {
     Clock,
-    Cloud,
-    Star,
+    Bg01,
+    News,
   },
   data() {
     return {
@@ -53,7 +83,7 @@ export default {
     };
   },
   mounted() {
-    // time - set : bg & clockImg
+    // time - set : bg
     const bgEl = document.getElementById("bg");
     let currentTime = new Date().getHours();
     if (currentTime >= 6 && currentTime < 15) {
@@ -65,9 +95,12 @@ export default {
     }
   },
   methods: {
-    selectIsland(group) {
+    selectIsland(group, topId) {
       this.$store.commit("island", { group });
+      this.$store.commit("topCount", { topId });
       this.$router.push({ path: "/homeData" });
+      console.log(group);
+      console.log(topId);
       this.onLoadClick();
     },
     playSound(sound) {
@@ -86,7 +119,7 @@ export default {
     },
     loadMessage() {
       return new Promise((resolve) => {
-        setTimeout(() => resolve("Hello world!"), 4000);
+        setTimeout(() => resolve(""), 6000);
       });
     },
     async onLoadClick() {
@@ -105,7 +138,7 @@ export default {
   width: 66vw;
   height: 100vh;
   margin: 0 auto;
-  padding: 50px 0;
+  padding: 5rem 0;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   transition: all 0.4s ease-in-out;

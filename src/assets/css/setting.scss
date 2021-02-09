@@ -10,22 +10,22 @@
 
 @mixin bg-noon(
   $angle: 180deg,
-  $color1: rgba(#00b1ff, 0.32),
-  $color2: rgba(#3ccad6, 0.32)
+  $color1: rgba(#b2e8fc, 1),
+  $color2: rgba(#bbebf6, 1)
 ) {
   background: linear-gradient($angle, $color1, $color2);
 }
 @mixin bg-evening(
   $angle: 180deg,
-  $color1: rgba(#ff8800, 0.45),
-  $color2: rgba(#ff4500, 0.45)
+  $color1: rgba(#ffc38b, 1),
+  $color2: rgba(#ffb48b, 1)
 ) {
   background: linear-gradient($angle, $color1, $color2);
 }
 @mixin bg-night(
   $angle: 180deg,
-  $color1: rgba(#0937b4, 0.45),
-  $color2: rgba(#050039, 0.45)
+  $color1: rgba(#8fa1d5, 1),
+  $color2: rgba(#8d90af, 1)
 ) {
   background: linear-gradient($angle, $color1, $color2);
 }
@@ -46,6 +46,17 @@
   100% {
     transform: rotate(135deg) translate(50%, 25%)
       skew(calc((90deg - 70deg) / 2), calc((90deg - 70deg) / 2)) scale(0.9);
+  }
+}
+@keyframes bounce {
+  0% {
+    transform: translatey(0px);
+  }
+  50% {
+    transform: translatey(-16px);
+  }
+  100% {
+    transform: translatey(0px);
   }
 }
 
@@ -111,12 +122,16 @@ button {
     width: 9vw;
     position: absolute;
     top: 40%;
-    transform: translateY(-50%);
-    animation: float 1.5s linear infinite alternate;
+    transition: all 0.4s ease-in-out;
+    &:hover {
+      transform: scale(1.2);
+      transition: all 0.4s;
+    }
     img {
       position: relative;
       z-index: 2;
       width: 100%;
+      animation: float 1.5s linear infinite alternate;
     }
     &.-left {
       left: 4%;
@@ -131,4 +146,79 @@ button {
   height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+// data
+.data {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 3rem;
+  background: #fff;
+  border-radius: 5rem 0 0 5rem;
+  box-shadow: -0.4rem 0 0.6rem rgba($color: #000000, $alpha: 0.16);
+  border-right: 20px solid #fff;
+  .data-title {
+    font-size: 4rem;
+    text-align: center;
+    margin: 0 0 3rem 0;
+  }
+  .data-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.2rem 4.2rem;
+    .data-item {
+      width: 100%;
+      background: #e7e8ea;
+      border-radius: 1.2rem;
+      box-shadow: 0 -0.4rem 0.6rem rgba($color: #000000, $alpha: 0.16);
+      padding: 1.2rem 0;
+      .data-icon {
+        position: relative;
+        z-index: 2;
+        width: 30%;
+        padding: 0 1.2rem 0 0;
+        img {
+          width: 5rem;
+          height: auto;
+        }
+      }
+      .data-work,
+      .data-name,
+      .data-count {
+        font-family: kosugi-maru, Helvetica, Arial, sans-serif;
+      }
+      .data-work {
+        font-size: 1.4rem;
+        text-align: left;
+        span {
+          &:nth-of-type(1) {
+            font-size: 1.8rem;
+            letter-spacing: 0.1rem;
+          }
+        }
+      }
+      .data-name {
+        font-size: 2.2rem;
+        text-align: center;
+        height: 2em;
+      }
+      .data-count {
+        padding: 0 1.2rem;
+        text-align: right;
+        font-size: 1.4rem;
+        span {
+          &:nth-of-type(2) {
+            font-size: 2.2rem;
+            letter-spacing: 0.1rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+.column {
+  display: flex;
+  align-items: center;
+  padding: 0 1.2rem;
 }
