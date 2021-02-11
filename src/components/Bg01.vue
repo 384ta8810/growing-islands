@@ -47,8 +47,10 @@ export default {
       (currentTime >= 0 && currentTime < 6)
     ) {
       cloudsEl.style.display = "none";
+      // starsEl.style.display = "none";`
     }
     if (currentTime >= 6 && currentTime < 18) {
+      // cloudsEl.style.display = "none";
       starsEl.style.display = "none";
     }
   },

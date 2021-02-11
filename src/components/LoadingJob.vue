@@ -120,7 +120,7 @@ export default {
   animation-direction: alternate;
   text-align: center;
   .message-image {
-    width: 20%;
+    width: 40%;
   }
   .message-text {
     width: 70%;

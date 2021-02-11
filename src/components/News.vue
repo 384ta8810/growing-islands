@@ -24,6 +24,8 @@
           <SumAllDay />
           <SumDay />
           <p class="label">news</p>
+          <!-- <p>aaa</p> -->
+          <p v-if="data.evaluate.length === 0" class="text">制作展が始まりました！！！！！</p>
           <div v-for="item in data.evaluate" :key="item.id">
             <p class="text">
               たった今、{{ item.evaluation.student_name }}さんが応援されました！
@@ -71,6 +73,7 @@ export default {
 .label {
   display: inline-block;
   color: #fff;
+  font-size: 1.5rem;
   background: #d35555;
   border-radius: 0.5rem;
   padding: 0.4rem 0.6rem;

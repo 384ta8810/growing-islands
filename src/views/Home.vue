@@ -36,17 +36,20 @@
               />
               <div class="shadow"></div>
             </router-link>
-            <!-- <router-link to="/job" class="arrow -right">
-              <img src="../assets/images/island_arrow-right.svg" alt="" />
-              <div class="shadow"></div>
-            </router-link> -->
           </div>
 
           <div class="islands">
             <button
               v-for="(item, index) in islandData.islands.home"
               :key="index"
-              @click="selectIsland(item.name, data.students[0].student_id)"
+              @click="
+                selectIsland(
+                  item.name,
+                  data.students[0].student_id,
+                  data.students[1].student_id,
+                  data.students[2].student_id
+                )
+              "
             >
               <img
                 v-on:mouseover="playSound(mouseOver)"
@@ -95,12 +98,10 @@ export default {
     }
   },
   methods: {
-    selectIsland(group, topId) {
+    selectIsland(group, gold, silver, bronze) {
       this.$store.commit("island", { group });
-      this.$store.commit("topCount", { topId });
+      this.$store.commit("ranking", [gold, silver, bronze]);
       this.$router.push({ path: "/homeData" });
-      console.log(group);
-      console.log(topId);
       this.onLoadClick();
     },
     playSound(sound) {

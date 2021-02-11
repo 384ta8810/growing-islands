@@ -1,38 +1,70 @@
 <template>
   <div id="bg" class="bg">
+    <ApolloQuery
+      :query="
+        (gql) => gql`
+          query MyQuery {
+            students(
+              order_by: { evaluation_aggregate: { count: desc } }
+              limit: 10
+            ) {
+              student_name
+              booth_number
+              student_id
+              group
+              job
+            }
+          }
+        `
+      "
+      :pollInterval="2000"
+    >
+      <template v-slot="{ result: { loading, error, data } }">
+        <div v-if="loading" class="loading apollo">ローディング ...</div>
+        <div v-else-if="error">404</div>
+        <div v-if="data">
+          <Clock />
+          <Bg01 />
+          <News />
+
+          <div class="arrows">
+            <router-link to="/" class="arrow -right">
+              <img
+                v-on:mouseover="playSound(mouseOver)"
+                src="../assets/images/island_arrow-right.svg"
+                alt=""
+              />
+              <div class="shadow"></div>
+            </router-link>
+          </div>
+
+          <div class="islands">
+            <button
+              v-for="(item, index) in islandData.islands.job"
+              :key="index"
+              @click="
+                selectIsland(
+                  item.name,
+                  data.students[0].student_id,
+                  data.students[1].student_id,
+                  data.students[2].student_id
+                )
+              "
+            >
+              <img
+                v-on:mouseover="playSound(mouseOver)"
+                :src="require('../assets/images/island_' + item.name + '.svg')"
+                alt=""
+              />
+              <div class="shadow"></div>
+            </button>
+          </div>
+        </div>
+      </template>
+    </ApolloQuery>
     <Clock />
     <Bg01 />
     <News />
-
-    <div class="arrows">
-      <!-- <router-link to="/" class="arrow -left">
-        <img src="../assets/images/island_arrow-left.svg" alt="" />
-        <div class="shadow"></div>
-      </router-link> -->
-      <router-link to="/" class="arrow -right">
-        <img
-          v-on:mouseover="playSound(mouseOver)"
-          src="../assets/images/island_arrow-right.svg"
-          alt=""
-        />
-        <div class="shadow"></div>
-      </router-link>
-    </div>
-
-    <div class="islands">
-      <button
-        v-for="(item, index) in islandData.islands.job"
-        :key="index"
-        @click="selectIsland(item.name)"
-      >
-        <img
-          v-on:mouseover="playSound(mouseOver)"
-          :src="require('../assets/images/island_' + item.name + '.svg')"
-          alt=""
-        />
-        <div class="shadow"></div>
-      </button>
-    </div>
   </div>
 </template>
 
@@ -69,8 +101,9 @@ export default {
     }
   },
   methods: {
-    selectIsland(group) {
+    selectIsland(group, gold, silver, bronze) {
       this.$store.commit("island", { group });
+      this.$store.commit("ranking", [gold, silver, bronze]);
       this.$router.push({ path: "/jobData" });
       this.onLoadClick();
     },
@@ -140,7 +173,7 @@ export default {
       content: "";
       position: absolute;
       bottom: 76%;
-      right: -56%;
+      left: 28%;
       z-index: 3;
       width: 100%;
       height: 100%;

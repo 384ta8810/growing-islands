@@ -6,7 +6,7 @@
           query allStudents($group: String) {
             students(
               where: { job: { _eq: $group } }
-              order_by: {evaluation_aggregate: {count: desc}}
+              order_by: { evaluation_aggregate: { count: desc } }
             ) {
               student_id
               student_name
@@ -67,6 +67,7 @@
                 @click="
                   selectIsland(`${filteredItem[0].relatedIslands[0].name}`)
                 "
+                v-on:mouseover="playSound(mouseOver)"
               >
                 <img src="../assets/images/arrow_upperLeft.svg" alt="" />
               </button>
@@ -76,6 +77,7 @@
                 @click="
                   selectIsland(`${filteredItem[0].relatedIslands[1].name}`)
                 "
+                v-on:mouseover="playSound(mouseOver)"
               >
                 <img src="../assets/images/arrow_upperRight.svg" alt="" />
               </button>
@@ -85,6 +87,7 @@
                 @click="
                   selectIsland(`${filteredItem[0].relatedIslands[2].name}`)
                 "
+                v-on:mouseover="playSound(mouseOver)"
               >
                 <img src="../assets/images/arrow_lowerRight.svg" alt="" />
               </button>
@@ -94,6 +97,7 @@
                 @click="
                   selectIsland(`${filteredItem[0].relatedIslands[3].name}`)
                 "
+                v-on:mouseover="playSound(mouseOver)"
               >
                 <img src="../assets/images/arrow_lowerLeft.svg" alt="" />
               </button>
@@ -104,6 +108,7 @@
                 v-for="(item, idx) in filteredItem[0].members"
                 :key="idx"
                 class="avatar"
+                :class="`avatar-${item.id}`"
                 :style="`left: ${item.xy[0]}%; bottom: ${item.xy[1]}%`"
                 v-on:mouseover="mouseOverAction(idx)"
                 v-on:mouseleave="mouseLeaveAction(idx)"
@@ -198,6 +203,7 @@
 import islandData from "../assets/json/islands.json";
 import ToJob from "../components/ToJob.vue";
 import Loading from "../components/LoadingJob.vue";
+import mouseOver from "@/assets/sounds/mouseOver_02.mp3";
 
 export default {
   name: "AllStudents",
@@ -214,6 +220,30 @@ export default {
   },
   mounted() {
     this.forceRerender();
+
+    // addClass - top1
+    for (let i = 0; i < this.filteredItem[0].members.length; i++) {
+      setTimeout(() => {
+        if (
+          document.querySelectorAll(".avatar")[i].classList[1] ===
+          `avatar-${this.rank[0]}`
+        ) {
+          document.querySelectorAll(".avatar")[i].classList.add("gold");
+        }
+        if (
+          document.querySelectorAll(".avatar")[i].classList[1] ===
+          `avatar-${this.rank[1]}`
+        ) {
+          document.querySelectorAll(".avatar")[i].classList.add("silver");
+        }
+        if (
+          document.querySelectorAll(".avatar")[i].classList[1] ===
+          `avatar-${this.rank[2]}`
+        ) {
+          document.querySelectorAll(".avatar")[i].classList.add("bronze");
+        }
+      }, 1000);
+    }
   },
   updated() {
     // time - set : bg
@@ -230,8 +260,10 @@ export default {
   data() {
     return {
       islandData,
+      mouseOver,
       componentKey: 0,
       group: this.$store.getters.getIsland,
+      rank: this.$store.getters.getRanking,
       hoverFlag: false,
       hoverIndex: null,
       series: [
@@ -308,7 +340,7 @@ export default {
                   fontFamily: "nicoca",
                   color: "#373d3f",
                   fontWeight: "bold",
-                  fontSize: "26px",
+                  fontSize: "22px",
                 },
                 total: {
                   show: true,
@@ -332,7 +364,6 @@ export default {
     selectIsland(group) {
       this.$store.commit("island", { group });
       this.$router.go({ path: this.$router.currentRoute.path });
-      // this.$router.push({ path: "/homeData" });
     },
     mouseOverAction(index) {
       this.hoverFlag = true;
@@ -340,6 +371,20 @@ export default {
     },
     mouseLeaveAction() {
       this.hoverFlag = false;
+    },
+    playSound(sound) {
+      if (sound) {
+        const audio = new Audio(sound);
+        const audioPromise = audio.play();
+        if (audioPromise !== undefined) {
+          audioPromise
+            .then(() => {
+              audio.play();
+              audio.volume = 0.7;
+            })
+            .catch(() => {});
+        }
+      }
     },
   },
 };
@@ -368,35 +413,54 @@ export default {
     height: 100vh;
     .avatar {
       position: absolute;
-      height: 9.2rem;
+      height: 7.2rem;
       cursor: pointer;
       &:hover {
-        img {
-          animation: bounce 0.8s linear infinite alternate;
-        }
+        animation: bounce 0.8s linear infinite alternate;
       }
-      &.top1 {
+      &.gold,
+      &.silver,
+      &.bronze {
         &::before {
-          content: '';
+          content: "";
           position: absolute;
+          z-index: 2;
           top: 0;
           left: 50%;
-          transform: translate(-50%, -30%);
-          background: url(../assets/images/crown.png) no-repeat center;
-          background-size: contain;
+          transform: translate(-50%, -60%);
           width: 8rem;
           height: 3rem;
+        }
+      }
+      &.gold {
+        &::before {
+          background: url(../assets/images/crown_gold.png) no-repeat center;
+          background-size: contain;
+        }
+      }
+      &.silver {
+        &::before {
+          background: url(../assets/images/crown_silver.png) no-repeat center;
+          background-size: contain;
+        }
+      }
+      &.bronze {
+        &::before {
+          background: url(../assets/images/crown_bronze.png) no-repeat center;
+          background-size: contain;
         }
       }
       img {
         height: 100%;
         display: block;
+        position: relative;
+        z-index: -1;
       }
       .avatar-message {
         position: absolute;
         top: 0%;
         left: 50%;
-        z-index: 2;
+        z-index: 3;
         padding: 2rem;
         background: #fff;
         border-radius: 2rem;

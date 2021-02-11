@@ -84,7 +84,7 @@ export default {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-40%, -80%);
+      transform: translate(-40%, -94%);
       color: #fff;
       span {
         display: block;

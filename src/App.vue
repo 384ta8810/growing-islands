@@ -29,6 +29,7 @@ export default {
     let currentTime = new Date().getHours();
     if (currentTime >= 6 && currentTime < 15) {
       this.bgm = this.noon;
+      // this.bgm = this.night;
     } else if (currentTime >= 15 && currentTime < 18) {
       this.bgm = this.evening;
     } else {

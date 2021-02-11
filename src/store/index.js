@@ -8,7 +8,7 @@ export default new Vuex.Store({
   state: {
     island: "",
     loading: false,
-    topCount: "",
+    ranking: [],
   },
   mutations: {
     island(state, payload) {
@@ -17,8 +17,8 @@ export default new Vuex.Store({
     setLoading(state, payload) {
       state.loading = payload;
     },
-    topCount(state, payload) {
-      state.topCount = payload.topId;
+    ranking(state, payload) {
+      state.ranking = payload;
     },
   },
   actions: {},
@@ -27,8 +27,8 @@ export default new Vuex.Store({
     getIsland: (state) => {
       return state.island;
     },
-    getTopCount: (state) => {
-      return state.topCount;
+    getRanking: (state) => {
+      return state.ranking;
     },
   },
   plugins: [createPersistedState()],
