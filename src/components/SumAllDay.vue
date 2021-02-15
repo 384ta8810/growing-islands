@@ -12,7 +12,7 @@
           }
         `
       "
-      :pollInterval="2000"
+      :pollInterval="200000"
     >
       <template v-slot="{ result: { loading, error, data } }">
         <div v-if="loading" class="loading apollo">ローディング ...</div>

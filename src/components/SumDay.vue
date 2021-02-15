@@ -12,7 +12,7 @@
           }
         `
       "
-      :pollInterval="2000"
+      :pollInterval="200000"
       :variables="{
         date,
       }"

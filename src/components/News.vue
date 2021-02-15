@@ -15,7 +15,7 @@
           }
         `
       "
-      :pollInterval="2000"
+      :pollInterval="200000"
     >
       <template v-slot="{ result: { loading, error, data } }">
         <div v-if="loading" class="loading apollo">ローディング ...</div>
@@ -24,8 +24,9 @@
           <SumAllDay />
           <SumDay />
           <p class="label">news</p>
-          <!-- <p>aaa</p> -->
-          <p v-if="data.evaluate.length === 0" class="text">制作展が始まりました！！！！！</p>
+          <p v-if="data.evaluate.length === 0" class="text">
+            制作展が始まりました！！！！！
+          </p>
           <div v-for="item in data.evaluate" :key="item.id">
             <p class="text">
               たった今、{{ item.evaluation.student_name }}さんが応援されました！

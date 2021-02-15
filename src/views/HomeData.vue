@@ -222,11 +222,6 @@ export default {
   mounted() {
     this.forceRerender();
 
-    console.log(this.rank);
-    console.log(this.rank[0]);
-    console.log(this.rank[1]);
-    console.log(this.rank[2]);
-
     // addClass - top1
     for (let i = 0; i < this.filteredItem[0].members.length; i++) {
       setTimeout(() => {
