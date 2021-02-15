@@ -19,7 +19,7 @@ export default {
   name: "Clock",
   data() {
     return {
-      clockImg: "sun",
+      clockImg: "noon",
       date: "",
       time: "",
     };
@@ -28,16 +28,14 @@ export default {
     // time - update
     setInterval(this.updateTime, 1000);
     // time - set : homeBg & clockImg
-    const cloudsEl = document.getElementById("clouds");
-    const starsEl = document.getElementById("stars");
     let currentTime = new Date().getHours();
-    if (
-      (currentTime >= 18 && currentTime < 24) ||
-      (currentTime >= 0 && currentTime < 6)
-    ) {
-      cloudsEl.style.display = "none";
-      starsEl.style.display = "block";
-      this.clockImg = "moon";
+    if (currentTime >= 6 && currentTime < 15) {
+      this.clockImg = "noon";
+      // this.clockImg = "night";
+    } else if (currentTime >= 15 && currentTime < 18) {
+      this.clockImg = "evening";
+    } else {
+      this.clockImg = "night";
     }
   },
   methods: {
@@ -84,7 +82,7 @@ export default {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-40%, -94%);
+      transform: translate(-40%, -84%);
       color: #fff;
       span {
         display: block;

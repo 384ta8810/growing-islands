@@ -42,16 +42,16 @@ export default {
     let currentTime = new Date().getHours();
     const cloudsEl = document.getElementById("clouds");
     const starsEl = document.getElementById("stars");
+    if (currentTime >= 6 && currentTime < 18) {
+      // cloudsEl.style.display = "none";
+      starsEl.style.display = "none";
+    }
     if (
       (currentTime >= 18 && currentTime < 24) ||
       (currentTime >= 0 && currentTime < 6)
     ) {
       cloudsEl.style.display = "none";
       // starsEl.style.display = "none";`
-    }
-    if (currentTime >= 6 && currentTime < 18) {
-      // cloudsEl.style.display = "none";
-      starsEl.style.display = "none";
     }
   },
 };

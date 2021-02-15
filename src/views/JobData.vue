@@ -424,7 +424,7 @@ export default {
         &::before {
           content: "";
           position: absolute;
-          z-index: 2;
+          z-index: 0;
           top: 0;
           left: 50%;
           transform: translate(-50%, -60%);

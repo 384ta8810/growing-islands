@@ -94,6 +94,7 @@ export default {
     let currentTime = new Date().getHours();
     if (currentTime >= 6 && currentTime < 15) {
       bgEl.classList.add("-noon");
+      // bgEl.classList.add("-night");
     } else if (currentTime >= 15 && currentTime < 18) {
       bgEl.classList.add("-evening");
     } else {
